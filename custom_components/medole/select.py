@@ -51,7 +51,7 @@ class MedoleFanSpeedSelect(SelectEntity):
     _attr_has_entity_name = True
     _attr_translation_key = "fan_speed"
     _attr_options = FAN_SPEED_OPTIONS
-    _attr_current_option = "high"
+    _attr_current_option = None
 
     def __init__(self, hass, name, client):
         """Initialize the fan speed select entity."""
@@ -70,11 +70,11 @@ class MedoleFanSpeedSelect(SelectEntity):
         result = await self._client.async_read_register(REG_FAN_SPEED)
         if result:
             speed_value = result.registers[0]
-            self._attr_current_option = FAN_SPEED_REVERSE_MAP.get(
-                speed_value, "high"
-            )
+            self._attr_current_option = FAN_SPEED_REVERSE_MAP.get(speed_value)
+            self._attr_available = True
         else:
             _LOGGER.error("Failed to read fan speed")
+            self._attr_available = False
 
     async def async_select_option(self, option: str) -> None:
         """Write selected fan speed to device."""
