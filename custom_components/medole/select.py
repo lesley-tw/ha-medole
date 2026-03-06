@@ -84,5 +84,8 @@ class MedoleFanSpeedSelect(SelectEntity):
         )
         if success:
             self._attr_current_option = option
+            self._attr_available = True
         else:
             _LOGGER.error("Failed to set fan speed to %s", option)
+            self._attr_available = False
+        self.async_write_ha_state()
